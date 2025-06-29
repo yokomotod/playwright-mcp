@@ -21,12 +21,14 @@ import type { FullConfig } from './config.js';
 import type { Connection } from './connection.js';
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import type { BrowserContextFactory } from './browserContextFactory.js';
+import type { Context } from './context.js';
 
 export class Server {
   readonly config: FullConfig;
   private _connectionList: Connection[] = [];
   private _browserConfig: FullConfig['browser'];
   private _contextFactory: BrowserContextFactory;
+  private _sharedContext?: Context;
 
   constructor(config: FullConfig) {
     this.config = config;
@@ -35,9 +37,15 @@ export class Server {
   }
 
   async createConnection(transport: Transport): Promise<Connection> {
-    const connection = createConnection(this.config, this._contextFactory);
+    const connection = createConnection(this.config, this._contextFactory, this._sharedContext);
     this._connectionList.push(connection);
     await connection.server.connect(transport);
+
+    // Save the context for reuse
+    if (!this._sharedContext) {
+      this._sharedContext = connection.context;
+    }
+
     return connection;
   }
 
