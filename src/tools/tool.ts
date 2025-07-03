@@ -50,7 +50,6 @@ export type ToolResult = {
   code: string[];
   action?: () => Promise<ToolActionResult>;
   captureSnapshot: boolean;
-  captureSnapshotCompact?: boolean;
   waitForNetwork: boolean;
   resultOverride?: ToolActionResult;
 };

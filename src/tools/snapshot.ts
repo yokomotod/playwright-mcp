@@ -26,19 +26,16 @@ const snapshot = defineTool({
     name: 'browser_snapshot',
     title: 'Page snapshot',
     description: 'Capture accessibility snapshot of the current page, this is better than screenshot',
-    inputSchema: z.object({
-      compact: z.boolean().optional().describe('Generate a compact snapshot with reduced size by removing URL information from link elements'),
-    }),
+    inputSchema: z.object({}),
     type: 'readOnly',
   },
 
-  handle: async (context, params) => {
+  handle: async context => {
     await context.ensureTab();
 
     return {
       code: [`// <internal code to capture accessibility snapshot>`],
       captureSnapshot: true,
-      captureSnapshotCompact: params.compact,
       waitForNetwork: false,
     };
   },

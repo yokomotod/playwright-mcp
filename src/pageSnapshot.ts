@@ -24,15 +24,13 @@ type PageEx = playwright.Page & {
 export class PageSnapshot {
   private _page: playwright.Page;
   private _text!: string;
-  private _compact?: boolean;
 
-  constructor(page: playwright.Page, compact?: boolean) {
+  constructor(page: playwright.Page) {
     this._page = page;
-    this._compact = compact;
   }
 
-  static async create(page: playwright.Page, compact?: boolean): Promise<PageSnapshot> {
-    const snapshot = new PageSnapshot(page, compact);
+  static async create(page: playwright.Page): Promise<PageSnapshot> {
+    const snapshot = new PageSnapshot(page);
     await snapshot._build();
     return snapshot;
   }
@@ -44,14 +42,12 @@ export class PageSnapshot {
   private async _build() {
     let snapshot = await callOnPageNoTrace(this._page, page => (page as PageEx)._snapshotForAI());
 
-    if (this._compact) {
-      // URLを削除して、要素テキストのみ残す（安全な削減）
-      // 例: - /url: https://example.com/path?param=value を削除
-      snapshot = snapshot.replace(/^\s*- \/url:.*$/gm, '');
-    }
+    // URLを削除して、要素テキストのみ残す（安全な削減）
+    // 例: - /url: https://example.com/path?param=value を削除
+    snapshot = snapshot.replace(/^\s*- \/url:.*$/gm, '');
 
     this._text = [
-      `- Page Snapshot${this._compact ? ' (compact mode - URLs removed)' : ''}`,
+      `- Page Snapshot`,
       '```yaml',
       snapshot,
       '```',
