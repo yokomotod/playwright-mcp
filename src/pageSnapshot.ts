@@ -46,6 +46,9 @@ export class PageSnapshot {
     // 例: - /url: https://example.com/path?param=value を削除
     snapshot = snapshot.replace(/^\s*- \/url:.*$/gm, '');
 
+    // 冗長な [cursor=pointer] 属性を削除
+    snapshot = snapshot.replace(/\s*\[cursor=pointer\]/g, '');
+
     this._text = [
       `- Page Snapshot`,
       '```yaml',
