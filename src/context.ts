@@ -135,7 +135,7 @@ export class Context {
   async run(tool: Tool, params: Record<string, unknown> | undefined) {
     // Tab management is done outside of the action() call.
     const toolResult = await tool.handle(this, tool.schema.inputSchema.parse(params || {}));
-    const { code, action, waitForNetwork, captureSnapshot, resultOverride } = toolResult;
+    const { code, action, waitForNetwork, captureSnapshot, captureSnapshotCompact, resultOverride } = toolResult;
     const racingAction = action ? () => this._raceAgainstModalDialogs(action) : undefined;
 
     if (resultOverride)
@@ -160,7 +160,7 @@ export class Context {
         actionResult = await racingAction?.() ?? undefined;
     } finally {
       if (captureSnapshot && !this._javaScriptBlocked())
-        await tab.captureSnapshot();
+        await tab.captureSnapshot(captureSnapshotCompact);
     }
 
     const result: string[] = [];

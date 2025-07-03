@@ -114,7 +114,7 @@ export class Tab {
     return this._requests;
   }
 
-  async captureSnapshot() {
-    this._snapshot = await PageSnapshot.create(this.page);
+  async captureSnapshot(compact?: boolean) {
+    this._snapshot = await PageSnapshot.create(this.page, compact);
   }
 }
